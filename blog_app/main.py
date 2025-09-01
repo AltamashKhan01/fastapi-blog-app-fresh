@@ -1,7 +1,7 @@
 # Import the FastAPI class
 from fastapi import FastAPI
 # Import the models module
-from . import models
+from app import models
 
 # Import the engine object from the database module
 from app.database import engine
@@ -19,4 +19,5 @@ app.include_router(authentication.router)
 # Include the blog router
 app.include_router(blog.router)
 # Include the user router
+
 app.include_router(user.router)
