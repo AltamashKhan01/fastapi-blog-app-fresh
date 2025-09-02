@@ -40,6 +40,19 @@ def login(
             detail="Incorrect password",
         )
 
-    # access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = token.create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/register", status_code=201, response_model=schemas.ShowUser)
+def register(request: schemas.UserBase, db: Session = Depends(database.get_db)):
+    """
+    This function creates a new user in the database.
+
+    Args:
+        request (schemas.UserBase): The request body containing the user's data.
+        db (Session, optional): The database session. Defaults to Depends(database.get_db).
+
+    Returns:
+        models.User: The newly created user.
+    """
+    return user_repo.create(request, db)
