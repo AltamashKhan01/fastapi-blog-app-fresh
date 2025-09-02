@@ -1,6 +1,7 @@
 # Import necessary modules
 from fastapi import APIRouter, Depends, HTTPException, status
-from app import database, models, token
+from app import database, models, token, schemas
+from app.repository import user_repo
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from app.hashing import Hash
