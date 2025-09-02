@@ -48,3 +48,62 @@ def get(id: int, db: Session):
             status_code=404, detail=f"User with the id {id} is not available"
         )
     return user.first()
+
+
+def update(id: int, request: schemas.UserBase, db: Session):
+    """
+    This function updates a user in the database.
+
+    Args:
+        id (int): The id of the user to update.
+        request (schemas.UserBase): The request body containing the updated user's data.
+        db (Session): The database session.
+
+    Raises:
+        HTTPException: If the user with the given id is not found.
+
+    Returns:
+        models.User: The updated user.
+    """
+    user = db.query(models.User).filter(models.User.id == id)
+
+    if not user.first():
+        raise HTTPException(
+            status_code=404, detail=f"User with the id {id} is not available"
+        )
+
+    hashedPassword = Hash.bcrypt(request.password)
+    user.update(
+        {
+            models.User.name: request.name,
+            models.User.email: request.email,
+            models.User.password: hashedPassword,
+        }
+    )
+    db.commit()
+    return {"detail": "User updated successfully"}
+
+
+def delete(id: int, db: Session):
+    """
+    This function deletes a user from the database.
+
+    Args:
+        id (int): The id of the user to delete.
+        db (Session): The database session.
+
+    Raises:
+        HTTPException: If the user with the given id is not found.
+
+    Returns:
+        dict: A message indicating that the user was deleted successfully.
+    """
+    user = db.query(models.User).filter(models.User.id == id)
+
+    if not user.first():
+        raise HTTPException(
+            status_code=404, detail=f"User with the id {id} is not available"
+        )
+    user.delete(synchronize_session=False)
+    db.commit()
+    return {"detail": "User deleted successfully"}
