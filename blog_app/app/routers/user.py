@@ -8,26 +8,6 @@ from sqlalchemy.orm import Session
 router = APIRouter(prefix="/user", tags=["Users"])
 
 
-@router.post("/", status_code=201, response_model=schemas.ShowUser)
-def create_user(
-    request: schemas.UserBase,
-    db: Session = Depends(database.get_db),
-    current_user: schemas.User = Depends(oauth2.get_current_user),
-):
-    """
-    This function creates a new user in the database.
-
-    Args:
-        request (schemas.UserBase): The request body containing the user's data.
-        db (Session, optional): The database session. Defaults to Depends(database.get_db).
-        current_user (schemas.User, optional): The current user. Defaults to Depends(oauth2.get_current_user).
-
-    Returns:
-        models.User: The newly created user.
-    """
-    return user_repo.create(request, db)
-
-
 @router.get("/{id}", response_model=schemas.ShowUser)
 def get_user(
     id,
@@ -46,3 +26,22 @@ def get_user(
         models.User: The user with the given id.
     """
     return user_repo.get(id, db)
+
+
+@router.put("/{id}", status_code=202)
+def update_user(
+    id: int,
+    request: schemas.UserBase,
+    db: Session = Depends(database.get_db),
+    current_user: schemas.User = Depends(oauth2.get_current_user),
+):
+    return user_repo.update(id, request, db)
+
+
+@router.delete("/{id}", status_code=204)
+def delete_user(
+    id: int,
+    db: Session = Depends(database.get_db),
+    current_user: schemas.User = Depends(oauth2.get_current_user),
+):
+    return user_repo.delete(id, db)
