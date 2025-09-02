@@ -2,11 +2,12 @@
 from datetime import datetime, timedelta, timezone
 from app.schemas import TokenData
 from jose import JWTError, jwt
+import secrets
 
 # Configuration for JWT token generation.
 # It's crucial to keep the SECRET_KEY secure and not expose it publicly.
 # In a production environment, this should be loaded from a secure configuration source.
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+SECRET_KEY = secrets.token_urlsafe(32)
 # The algorithm used to sign the JWT.
 ALGORITHM = "HS256"
 # The duration for which the access token is valid, in minutes.
@@ -64,3 +65,4 @@ def verify_token(token: str, credentials_exception):
         # raise the provided exception.
         raise credentials_exception
     return token_data
+
